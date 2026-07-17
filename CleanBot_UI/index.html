@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+    <title>CleanBot Pro</title>
+  </head>
+  <body>
+    <div id="app">
+      <!-- Connection Screen -->
+      <div id="connect-screen" class="glass-panel">
+        <h1>CleanBot Pro</h1>
+        <p>Enter the ESP32 IP Address to connect.</p>
+        <div class="input-group">
+          <input type="text" id="ip-address" placeholder="e.g. 192.168.1.50" value="192.168.1.50" />
+          <button id="btn-connect" class="btn-primary">Connect</button>
+        </div>
+        <p id="conn-status" class="status-msg"></p>
+      </div>
+
+      <!-- Dashboard Screen (Hidden initially) -->
+      <div id="dashboard-screen" class="glass-panel hidden">
+        <header>
+          <h2>Dashboard</h2>
+          <span id="live-indicator" class="pulsing-dot"></span>
+        </header>
+
+        <div class="telemetry-grid">
+          <div class="telemetry-card">
+            <span class="label">State</span>
+            <span class="value" id="val-state">IDLE</span>
+          </div>
+          <div class="telemetry-card">
+            <span class="label">Rear Distance</span>
+            <span class="value"><span id="val-dist">--</span> cm</span>
+          </div>
+          <div class="telemetry-card">
+            <span class="label">Front L (IR)</span>
+            <span class="value" id="val-irl">--</span>
+          </div>
+          <div class="telemetry-card">
+            <span class="label">Front R (IR)</span>
+            <span class="value" id="val-irr">--</span>
+          </div>
+        </div>
+
+        <div class="controls-container">
+          <div class="dpad">
+            <div></div><button class="dbtn" data-cmd="F">▲</button><div></div>
+            <button class="dbtn" data-cmd="L">◀</button>
+            <button class="dbtn stop-btn" data-cmd="S">■</button>
+            <button class="dbtn" data-cmd="R">▶</button>
+            <div></div><button class="dbtn" data-cmd="B">▼</button><div></div>
+          </div>
+        </div>
+
+        <div class="speed-control-group">
+          <div class="speed-control">
+            <label for="speed-slider-l">Left Motor: <span id="speed-val-l">120</span></label>
+            <input type="range" id="speed-slider-l" min="80" max="255" value="120">
+          </div>
+          <div class="speed-control">
+            <label for="speed-slider-r">Right Motor: <span id="speed-val-r">120</span></label>
+            <input type="range" id="speed-slider-r" min="80" max="255" value="120">
+          </div>
+        </div>
+
+        <div class="action-buttons">
+          <button id="btn-auto" class="btn-action ai-btn">⚡ Auto-Clean</button>
+          <button id="btn-vac-on" class="btn-action vac-on">🌪️ Vac On</button>
+          <button id="btn-vac-off" class="btn-action vac-off">Vac Off</button>
+        </div>
+        
+        <button id="btn-disconnect" class="btn-secondary">Disconnect</button>
+      </div>
+    </div>
+    <script type="module" src="/main.js"></script>
+  </body>
+</html>
