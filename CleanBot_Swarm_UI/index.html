@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+    <title>CleanBot Pro</title>
+  </head>
+  <body>
+    <div id="app">
+      <!-- Connection Screen -->
+      <div id="connect-screen" class="glass-panel">
+        <h1>CleanBot Swarm</h1>
+        <p>Enter the IPs of both robots.</p>
+        <div class="input-group">
+          <input type="text" id="ip-address-a" placeholder="Robot A IP" />
+          <input type="text" id="ip-address-b" placeholder="Robot B IP" />
+          <button id="btn-connect" class="btn-primary">Connect Swarm</button>
+        </div>
+        <p id="conn-status" class="status-msg"></p>
+      </div>
+
+      <!-- Dashboard Screen -->
+      <div id="dashboard-screen" class="glass-panel hidden">
+        <header>
+          <h2>Swarm Dashboard</h2>
+          <button id="btn-swarm-auto" class="btn-primary" style="background: var(--success); border:none; padding: 10px; border-radius: 8px;">LAUNCH SWARM</button>
+        </header>
+
+        <div class="swarm-grid">
+          <!-- ROBOT A -->
+          <div class="robot-panel">
+            <h3>Robot A <span id="live-indicator-a" class="pulsing-dot"></span></h3>
+            <div class="telemetry-grid">
+              <div class="telemetry-card"><span class="label">State</span><span class="value" id="val-state-a">IDLE</span></div>
+              <div class="telemetry-card"><span class="label">Rear</span><span class="value"><span id="val-dist-a">--</span> cm</span></div>
+              <div class="telemetry-card"><span class="label">Front L</span><span class="value" id="val-irl-a">--</span></div>
+              <div class="telemetry-card"><span class="label">Front R</span><span class="value" id="val-irr-a">--</span></div>
+            </div>
+            <div class="action-buttons" style="margin-top: 15px;">
+               <button id="btn-auto-a" class="btn-action ai-btn" style="padding:10px;">Auto A</button>
+               <button id="btn-stop-a" class="btn-action" style="padding:10px; background:var(--alert);">Stop A</button>
+            </div>
+          </div>
+
+          <!-- ROBOT B -->
+          <div class="robot-panel">
+            <h3>Robot B <span id="live-indicator-b" class="pulsing-dot"></span></h3>
+            <div class="telemetry-grid">
+              <div class="telemetry-card"><span class="label">State</span><span class="value" id="val-state-b">IDLE</span></div>
+              <div class="telemetry-card"><span class="label">Rear</span><span class="value"><span id="val-dist-b">--</span> cm</span></div>
+              <div class="telemetry-card"><span class="label">Front L</span><span class="value" id="val-irl-b">--</span></div>
+              <div class="telemetry-card"><span class="label">Front R</span><span class="value" id="val-irr-b">--</span></div>
+            </div>
+            <div class="action-buttons" style="margin-top: 15px;">
+               <button id="btn-auto-b" class="btn-action ai-btn" style="padding:10px;">Auto B</button>
+               <button id="btn-stop-b" class="btn-action" style="padding:10px; background:var(--alert);">Stop B</button>
+            </div>
+          </div>
+        </div>
+
+        <button id="btn-disconnect" class="btn-secondary" style="margin-top: 30px;">Disconnect Swarm</button>
+      </div>
+    </div>
+    <script type="module" src="/main.js"></script>
+  </body>
+</html>
