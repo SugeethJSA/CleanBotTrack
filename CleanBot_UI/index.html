@@ -3,77 +3,180 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
-    <title>CleanBot Pro</title>
+    <title>CleanBot Command & Control</title>
+    <!-- Premium Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Orbitron:wght@400;600;800;900&display=swap" rel="stylesheet">
   </head>
   <body>
     <div id="app">
-      <!-- Connection Screen -->
-      <div id="connect-screen" class="glass-panel">
-        <h1>CleanBot Pro</h1>
-        <p>Enter the ESP32 IP Address to connect.</p>
-        <div class="input-group">
-          <input type="text" id="ip-address" placeholder="e.g. 192.168.1.50" value="192.168.1.50" />
-          <button id="btn-connect" class="btn-primary">Connect</button>
+      <!-- Top Bar / Header -->
+      <header class="main-header glass-panel">
+        <div class="logo-area">
+          <div class="glow-logo"></div>
+          <h1>CLEANBOT<span>C2</span></h1>
         </div>
-        <p id="conn-status" class="status-msg"></p>
-      </div>
-
-      <!-- Dashboard Screen (Hidden initially) -->
-      <div id="dashboard-screen" class="glass-panel hidden">
-        <header>
-          <h2>Dashboard</h2>
-          <span id="live-indicator" class="pulsing-dot"></span>
-        </header>
-
-        <div class="telemetry-grid">
-          <div class="telemetry-card">
-            <span class="label">State</span>
-            <span class="value" id="val-state">IDLE</span>
-          </div>
-          <div class="telemetry-card">
-            <span class="label">Rear Distance</span>
-            <span class="value"><span id="val-dist">--</span> cm</span>
-          </div>
-          <div class="telemetry-card">
-            <span class="label">Front L (IR)</span>
-            <span class="value" id="val-irl">--</span>
-          </div>
-          <div class="telemetry-card">
-            <span class="label">Front R (IR)</span>
-            <span class="value" id="val-irr">--</span>
-          </div>
+        <div class="global-status">
+          <span class="label">Active Links</span>
+          <span id="active-count" class="count-badge">0 / 0</span>
         </div>
+      </header>
 
-        <div class="controls-container">
-          <div class="dpad">
-            <div></div><button class="dbtn" data-cmd="F">▲</button><div></div>
-            <button class="dbtn" data-cmd="L">◀</button>
-            <button class="dbtn stop-btn" data-cmd="S">■</button>
-            <button class="dbtn" data-cmd="R">▶</button>
-            <div></div><button class="dbtn" data-cmd="B">▼</button><div></div>
-          </div>
-        </div>
-
-        <div class="speed-control-group">
-          <div class="speed-control">
-            <label for="speed-slider-l">Left Motor: <span id="speed-val-l">120</span></label>
-            <input type="range" id="speed-slider-l" min="80" max="255" value="120">
-          </div>
-          <div class="speed-control">
-            <label for="speed-slider-r">Right Motor: <span id="speed-val-r">120</span></label>
-            <input type="range" id="speed-slider-r" min="80" max="255" value="120">
-          </div>
-        </div>
-
-        <div class="action-buttons">
-          <button id="btn-auto" class="btn-action ai-btn">⚡ Auto-Clean</button>
-          <button id="btn-vac-on" class="btn-action vac-on">🌪️ Vac On</button>
-          <button id="btn-vac-off" class="btn-action vac-off">Vac Off</button>
-        </div>
+      <!-- Main Workspace Grid -->
+      <div class="dashboard-grid">
         
-        <button id="btn-disconnect" class="btn-secondary">Disconnect</button>
+        <!-- COLUMN 1: Fleet Management (Left) -->
+        <section class="panel-column fleet-panel glass-panel">
+          <h2><span class="icon">🛸</span> FLEET MANAGER</h2>
+          <p class="panel-subtitle">Register and connect to multiple CleanBots on your Wi-Fi.</p>
+          
+          <!-- Add Robot Form -->
+          <div class="add-robot-form">
+            <div class="input-row">
+              <input type="text" id="new-bot-name" placeholder="Robot Nickname (e.g. Living Room)" />
+            </div>
+            <div class="input-row">
+              <input type="text" id="new-bot-ip" placeholder="ESP32 IP (e.g. 192.168.1.50)" />
+              <button id="btn-add-bot" class="btn-primary">Add</button>
+            </div>
+          </div>
+
+          <!-- Fleet List -->
+          <div class="fleet-list-container">
+            <h3>ACTIVE FLEET</h3>
+            <div id="fleet-list" class="fleet-list">
+              <!-- Dynamically populated via JS -->
+              <div class="no-bots-msg">No robots registered. Add one above.</div>
+            </div>
+          </div>
+
+          <!-- Fleet Broadcast Controls (Command All) -->
+          <div class="broadcast-section">
+            <h3>FLEET BROADCAST (ALL BOTS)</h3>
+            <div class="broadcast-buttons">
+              <button id="btn-all-auto" class="btn-broadcast auto-btn">⚡ ALL AUTO</button>
+              <button id="btn-all-stop" class="btn-broadcast stop-btn">■ ALL STOP</button>
+              <button id="btn-all-vacon" class="btn-broadcast vac-btn">🌪️ VAC ALL ON</button>
+              <button id="btn-all-vacoff" class="btn-broadcast vac-btn-off">VAC ALL OFF</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- COLUMN 2: Selected Robot Control Workspace (Center) -->
+        <section class="panel-column control-panel glass-panel">
+          <div class="control-header">
+            <div>
+              <span class="label">SELECTED CLEANBOT</span>
+              <h2 id="active-bot-title">NO BOT SELECTED</h2>
+            </div>
+            <div class="status-indicator">
+              <span id="active-bot-ip-display" class="ip-display">---.---.---.---</span>
+              <span id="active-bot-badge" class="badge-offline">OFFLINE</span>
+            </div>
+          </div>
+
+          <!-- Interactive 2D Path Map & Radar -->
+          <div class="map-container">
+            <div class="map-overlay-title">FLEET RADAR & PATH MAP</div>
+            <canvas id="radar-canvas"></canvas>
+            <div class="map-controls">
+              <button id="btn-reset-map" class="btn-mini">Clear Map Trails</button>
+            </div>
+          </div>
+
+          <!-- Active Robot Telemetry Grid -->
+          <div class="telemetry-grid">
+            <div class="telemetry-card">
+              <span class="label">Operational State</span>
+              <span class="value" id="val-state">N/A</span>
+            </div>
+            <div class="telemetry-card">
+              <span class="label">Back Distance</span>
+              <div class="dist-meter-container">
+                <span class="value" id="val-dist">--</span>
+                <span class="unit">cm</span>
+              </div>
+              <div class="progress-bar-bg">
+                <div id="dist-bar" class="progress-bar" style="width: 0%"></div>
+              </div>
+            </div>
+            <div class="telemetry-card">
+              <span class="label">Front Left IR</span>
+              <span class="value ir-indicator" id="val-irl">N/A</span>
+            </div>
+            <div class="telemetry-card">
+              <span class="label">Front Right IR</span>
+              <span class="value ir-indicator" id="val-irr">N/A</span>
+            </div>
+          </div>
+
+          <!-- Motor Speeds -->
+          <div class="speed-section">
+            <div class="speed-row">
+              <div class="speed-control-slider">
+                <label for="speed-slider-l">Left Motor Power: <span id="speed-val-l">--</span></label>
+                <input type="range" id="speed-slider-l" min="80" max="255" value="200" disabled>
+              </div>
+              <div class="speed-control-slider">
+                <label for="speed-slider-r">Right Motor Power: <span id="speed-val-r">--</span></label>
+                <input type="range" id="speed-slider-r" min="80" max="255" value="200" disabled>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- COLUMN 3: Drive Deck & Terminal logs (Right) -->
+        <section class="panel-column drive-panel glass-panel">
+          <!-- Manual Driving D-Pad -->
+          <div class="drive-section">
+            <h2><span class="icon">🎮</span> DRIVE DECK</h2>
+            <p class="panel-subtitle">Use buttons below or hotkeys (W, A, S, D, Space).</p>
+            
+            <div class="controls-container">
+              <div class="dpad">
+                <div></div>
+                <button class="dbtn" data-cmd="F" id="btn-drive-f" disabled>▲</button>
+                <div></div>
+                <button class="dbtn" data-cmd="L" id="btn-drive-l" disabled>◀</button>
+                <button class="dbtn stop-btn" data-cmd="S" id="btn-drive-s" disabled>■</button>
+                <button class="dbtn" data-cmd="R" id="btn-drive-r" disabled>▶</button>
+                <div></div>
+                <button class="dbtn" data-cmd="B" id="btn-drive-b" disabled>▼</button>
+                <div></div>
+              </div>
+            </div>
+
+            <!-- Individual Action Toggles -->
+            <div class="action-buttons">
+              <div class="action-row">
+                <button id="btn-auto" class="btn-action ai-btn" disabled>⚡ Toggle Auto-Clean</button>
+              </div>
+              <div class="action-row">
+                <button id="btn-vac-on" class="btn-action vac-on" disabled>
+                  <span class="fan-icon" id="fan-icon">🌀</span> Turn Vacuum ON
+                </button>
+                <button id="btn-vac-off" class="btn-action vac-off" disabled>Vacuum OFF</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Console Event Log -->
+          <div class="console-section">
+            <div class="console-header">
+              <h3>SYSTEM DIAGNOSTICS</h3>
+              <button id="btn-clear-console" class="btn-mini">Clear Logs</button>
+            </div>
+            <div id="console-log" class="console-log">
+              <div class="console-line system">[SYSTEM] Dashboard initialized. Add CleanBots to begin.</div>
+            </div>
+          </div>
+        </section>
+
       </div>
     </div>
+    
+    <!-- Link to the main Javascript -->
     <script type="module" src="/main.js"></script>
   </body>
 </html>
